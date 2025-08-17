@@ -90,11 +90,13 @@ console.log(a === b);
 `useCallback` giúp ghi nhớ 1 function đã được định nghĩa giữa mỗi lần component render lại giúp tránh re-render khi truyền xuống component con, tránh việc render không cần thiết.
 
 ### Hoạt động
+
 ```jsx
 useCallback(() => {
-  //logic 
-},[dependencies])
+  //logic
+}, [dependencies]);
 ```
+
 - Khi component được re-render lại thì các function được khai báo trong component sẽ được tạo lại
 - `useCallback` giúp ghi nhớ lại hàm fn và chỉ tạo lại mới khi dependency thay đổi
 - Trong những lần render tiếp theo, react sẽ so sánh dependencies hiện tại với dependencies của lần trước.
@@ -102,89 +104,110 @@ useCallback(() => {
 - Nếu dependencies có thay đổi: React sẽ trả về hàm mới và ghi nhớ lại.
 
 ### Những trường hợp sử dụng
+
 - Khi truyền hàm xuống component con và component con được bao bọc bởi React.memo()
 - Khi hàm nằm trong dependencies của `useEffect`
 
 ### Tại sao cần dùng useCallback
-- Ngăn chặn khởi tạo lại 1 hàm nào đó mỗi khi component re-render 
-- Tránh re-render không cần thiết. 
+
+- Ngăn chặn khởi tạo lại 1 hàm nào đó mỗi khi component re-render
+- Tránh re-render không cần thiết.
 
 ## 5. useMemo
+
 ### Khái niệm
+
 useMemo giúp ghi nhớ lại kết quả tính toán của một biểu thức nặng, tránh việc tính toán lại mỗi lần component re-render.
 
 ### Hoạt động
-```jsx
-useMemo(() => {
 
-},[dependencies])
+```jsx
+useMemo(() => {}, [dependencies]);
 ```
+
 - Khi component render lần đầu tiên, React sẽ chạy lại callback, tính toán và ghi nhớ kết quả tính toán lại
-- Trong các lần render tiếp theo: 
-  * React sẽ so sánh dependencies mới với dependencies trước đó
-  * Nếu dependencies không đổi -> React sẽ trả về giá trị đã ghi nhớ, không tính toán lại
-  * Nếu dependencies thay đổi -> React chạy lại và tính toán lại giá trị mới và lưu lại cho các lần render tiếp theo
+- Trong các lần render tiếp theo:
+  - React sẽ so sánh dependencies mới với dependencies trước đó
+  - Nếu dependencies không đổi -> React sẽ trả về giá trị đã ghi nhớ, không tính toán lại
+  - Nếu dependencies thay đổi -> React chạy lại và tính toán lại giá trị mới và lưu lại cho các lần render tiếp theo
 
 ### Những trường hợp sử dụng useMemo
-- Khi xử lý logic nặng như filter mảng, sort hay các tính toán phức tạp 
+
+- Khi xử lý logic nặng như filter mảng, sort hay các tính toán phức tạp
 - Giúp tránh chạy lại mỗi khi component re-render
 
 ### Tác hại lạm dụng useCallback và useMemo
+
 - Không nên lạm dụng trong những trường hợp không cần thiết vì gây tốn RAM
 
 ### Kết luận
-- Vì vậy nên sử dụng useMemo và useCallback trong những trường hợp không cần thiết hoặc tối ưu cho component con quan trọng, hàm và biểu thức nằm trong `useEffect`. 
+
+- Vì vậy nên sử dụng useMemo và useCallback trong những trường hợp không cần thiết hoặc tối ưu cho component con quan trọng, hàm và biểu thức nằm trong `useEffect`.
 
 ## 6 React.memo
+
 ### Khái niệm
+
 `React.memo` giúp ghi nhớ kết quả render của component con
 Nếu props hay state component không thay đổi thì React sẽ bỏ qua render lại và dùng lại kết quả render trước đó.
 
 ### Hoạt động
+
 - Khi component cha re-render thì tất cả component con cũng sẽ re-render
 - Với React.memo
-  * React sẽ so sánh props hay state hiện tại với props và state trước đó 
-  * Nếu props hay state không thay đổi -> component con sẽ không re-render
-  * Nếu props hay state thay đổi -> component con sẽ render lại
+  - React sẽ so sánh props hay state hiện tại với props và state trước đó
+  - Nếu props hay state không thay đổi -> component con sẽ không re-render
+  - Nếu props hay state thay đổi -> component con sẽ render lại
 
 ### Dùng trong những trường hợp
-+ Kết hợp với useCallback 
-+ Component con không cần re-render mỗi khi component cha render (khi props hay state không thay đổi)
+
+- Kết hợp với useCallback
+- Component con không cần re-render mỗi khi component cha render (khi props hay state không thay đổi)
 
 ## 7. useRef
+
 ### Khái niệm
+
 Dùng để tạo một đối tượng tham chiếu có thể lưu trữ giá trị qua các lần render nhưng không làm component re-render khi giá trị thay đổi
 
 ### Hoạt động
+
 ```jsx
-const ref = useRef(initialValue)
+const ref = useRef(initialValue);
 ```
-* useRef sẽ nhận một giá trị khởi tạo 
-Khi component render lần đầu tiên, React trả về 1 object có dạng 
+
+- useRef sẽ nhận một giá trị khởi tạo
+  Khi component render lần đầu tiên, React trả về 1 object có dạng
+
 ```jsx
 {
-  current: initialValue
+  current: initialValue;
 }
 ```
-* Object này sẽ giữ nguyên tham chiếu trong suốt vòng đời component
-* Trong các lần render tiếp theo
+
+- Object này sẽ giữ nguyên tham chiếu trong suốt vòng đời component
+- Trong các lần render tiếp theo
+
   - React sẽ không tạo lại object mới cho useRef, luôn trả về cùng một object (cùng địa chỉ trong bộ nhớ)
   - Nếu thay đổi ref.current, giá trị thay đổi nhưng không trigger re-render
 
-* **Kết luận**: Là 1 function nhận 1 giá trị khởi tạo , trả về 1 object có key là current, khi component re-render nó đều tham chiếu đến 1 object duy nhất và không tạo lại object mới.
+- **Kết luận**: Là 1 function nhận 1 giá trị khởi tạo , trả về 1 object có key là current, khi component re-render nó đều tham chiếu đến 1 object duy nhất và không tạo lại object mới.
 
 ### Dùng trong những trường hợp
+
 - **Tham chiếu đến phần tử DOM**  
-  Ví dụ: focus input, scroll vào một phần tử, trigger click.  
+  Ví dụ: focus input, scroll vào một phần tử, trigger click.
 
 - **Lưu giá trị qua các lần render mà không trigger re-render**  
-  Dùng để giữ biến tạm, counter, timeout, interval... mà không cần hiển thị ra UI.  
+  Dùng để giữ biến tạm, counter, timeout, interval... mà không cần hiển thị ra UI.
 
 - **Kết hợp với useEffect để kiểm soát side effect**  
   Dùng như một cờ (flag) để tránh việc gọi API nhiều lần, đặc biệt trong React khi StrictMode khiến `useEffect` chạy 2 lần trong môi trường dev.
 
 - **Dùng useRef để tracking giá trị mới nhất của useState**
+
 ### Tại sao cần sử dụng useRef
+
 - Giữ nguyên giá trị giữa các lần re-render component mà không bị reset lại mỗi lần component re-render
 - Giữ được tham chiếu đến DOM element
 - `useRef` khi thay đổi ref.current khi component sẽ không bị render và không làm thay đổi UI
@@ -193,13 +216,9 @@ Khi component render lần đầu tiên, React trả về 1 object có dạng
 ### 8. So sánh giữa useRef và useState
 
 - **Giống nhau**: Đều khởi tạo 1 giá trị ban đầu và thay đổi được giá trị
-- **Khác nhau**: 
+- **Khác nhau**:
   - `useRef`: Khi mà thay đổi giá trị không gây ra render component và không hiển thị ra UI
   - `useState`: Khi mà thay đổi lại giá trị state thì component sẽ render và hiện thị ra UI <br>
-- **Kết luận**: 
+- **Kết luận**:
   - Khi muốn lưu dữ liệu và cập nhật dữ liệu hiển thị UI -> `useState`
   - Khi muốn lưu dữ liệu và cập nhật dữ liệu không làm component re-render và không hiển thị ra UI -> `useRef`
-
-
-event loop, hositing, closure 
-memory head/stack , immutable
